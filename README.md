@@ -179,8 +179,9 @@ This project is open source and available under the [MIT License](LICENSE).
 ## 👤 Author
 
 **Ali Ashraf**
-- GitHub: [@aliashraf407](https://github.com/aliashraf407)
-- LinkedIn: [aliashraf407](https://linkedin.com/in/aliashraf407)
+- GitHub: [@ali-abofouda](https://github.com/ali-abofouda)
+- LinkedIn: [ali-ashraf-8b619b22a](https://www.linkedin.com/in/ali-ashraf-8b619b22a/)
+- X (Twitter): [@realaliashraf](https://x.com/realaliashraf)
 - Email: aliashraf407@gmail.com
 
 ---
