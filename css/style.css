@@ -364,6 +364,7 @@
 html {
     scroll-behavior: smooth;
     font-size: 16px;
+    overflow-x: hidden;
 }
 
 body {
@@ -375,6 +376,7 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     transition: background-color var(--transition-slow), color var(--transition-slow);
+    overflow-x: hidden;
 }
 
 img {
