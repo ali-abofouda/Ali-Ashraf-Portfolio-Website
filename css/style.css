@@ -712,6 +712,7 @@ button {
     position: relative;
     overflow: hidden;
     transition: background var(--transition-slow);
+    max-width: 100vw;
 }
 
 /* Animated gradient background */
@@ -770,6 +771,10 @@ button {
     grid-template-columns: 1fr 1fr;
     gap: var(--spacing-3xl);
     align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-lg);
 }
 
 .hero-content {
@@ -894,6 +899,8 @@ button {
     align-items: center;
     position: relative;
     z-index: 2;
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .hero-image-wrapper {
