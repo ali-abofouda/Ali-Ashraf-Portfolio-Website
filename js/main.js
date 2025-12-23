@@ -13,9 +13,12 @@ const backToTop = document.getElementById('back-to-top');
 const contactForm = document.getElementById('contact-form');
 const currentYearSpan = document.getElementById('current-year');
 const themeToggle = document.getElementById('theme-toggle');
+const loader = document.getElementById('loader');
+const typingText = document.getElementById('typing-text');
 
 // ========== Initialize ==========
 document.addEventListener('DOMContentLoaded', () => {
+    initLoader();
     initNavigation();
     initScrollEffects();
     initBackToTop();
@@ -23,6 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
     setCurrentYear();
     initSmoothScroll();
     initThemeToggle();
+    initTypingAnimation();
+    initScrollReveal();
 });
 
 // ========== Navigation ==========
@@ -445,5 +450,94 @@ if ('IntersectionObserver' in window) {
 
 // ========== Console Easter Egg ==========
 console.log('%c👋 Hello, fellow developer!', 'font-size: 20px; font-weight: bold;');
-console.log('%c📧 Interested in working together? Contact me at aliashraf407@gmail.com', 'font-size: 14px;');
+console.log('%c📧 Interested in working together? Contact me at ali.ashraf.abofouda@gmail.com', 'font-size: 14px;');
 console.log('%c🔍 Feel free to explore the code!', 'font-size: 14px;');
+
+// ========== Loading Screen ==========
+function initLoader() {
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            loader.classList.add('hidden');
+        }, 500);
+    });
+}
+
+// ========== Typing Animation ==========
+function initTypingAnimation() {
+    const titles = [
+        'Data Scientist',
+        'Machine Learning Engineer',
+        'AI Specialist',
+        'Computer Vision Developer',
+        'Deep Learning Enthusiast'
+    ];
+    
+    let titleIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    let typeSpeed = 100;
+    
+    function type() {
+        const currentTitle = titles[titleIndex];
+        
+        if (isDeleting) {
+            typingText.textContent = currentTitle.substring(0, charIndex - 1);
+            charIndex--;
+            typeSpeed = 50;
+        } else {
+            typingText.textContent = currentTitle.substring(0, charIndex + 1);
+            charIndex++;
+            typeSpeed = 100;
+        }
+        
+        if (!isDeleting && charIndex === currentTitle.length) {
+            typeSpeed = 2000; // Pause at end
+            isDeleting = true;
+        } else if (isDeleting && charIndex === 0) {
+            isDeleting = false;
+            titleIndex = (titleIndex + 1) % titles.length;
+            typeSpeed = 500; // Pause before next word
+        }
+        
+        setTimeout(type, typeSpeed);
+    }
+    
+    // Start typing animation
+    if (typingText) {
+        setTimeout(type, 1000);
+    }
+}
+
+// ========== Scroll Reveal Animations ==========
+function initScrollReveal() {
+    // Add reveal class to elements
+    const revealElements = document.querySelectorAll(
+        '.section-title, .about-text, .about-stats, .skill-category, .project-card, .timeline-item, .contact-card, .testimonial-card'
+    );
+    
+    revealElements.forEach(el => {
+        el.classList.add('reveal');
+    });
+    
+    // Add stagger class to grids
+    const staggerGrids = document.querySelectorAll('.skills-grid, .projects-grid, .contact-info');
+    staggerGrids.forEach(grid => {
+        grid.classList.add('stagger-children');
+    });
+    
+    // Intersection Observer for reveal
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+            }
+        });
+    }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    });
+    
+    document.querySelectorAll('.reveal, .stagger-children').forEach(el => {
+        revealObserver.observe(el);
+    });
+}

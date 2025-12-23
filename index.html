@@ -29,6 +29,19 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <!-- Loading Screen -->
+    <div class="loader-wrapper" id="loader">
+        <div class="loader">
+            <div class="loader-circle"></div>
+            <span class="loader-text">Loading...</span>
+        </div>
+    </div>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/201005335458" target="_blank" rel="noopener noreferrer" class="whatsapp-float" aria-label="Chat on WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <div class="container nav-container">
@@ -62,7 +75,10 @@
             <div class="hero-content">
                 <p class="hero-greeting">Hello, I'm</p>
                 <h1 class="hero-title">Ali Ashraf</h1>
-                <h2 class="hero-subtitle">Data Scientist | Machine Learning & AI Specialist</h2>
+                <h2 class="hero-subtitle">
+                    <span class="typing-text" id="typing-text"></span>
+                    <span class="typing-cursor">|</span>
+                </h2>
                 <p class="hero-description">
                     I turn data into actionable insights and build intelligent systems 
                     that solve real-world problems. Specializing in Computer Vision, 
@@ -481,7 +497,7 @@
                             <h3>Bachelor of Computer Engineering</h3>
                             <span class="timeline-date">Expected 2025</span>
                         </div>
-                        <p class="timeline-subtitle">University, Egypt</p>
+                        <p class="timeline-subtitle">Faculty of Engineering, Tanta University, Egypt</p>
                         <p class="timeline-description">
                             Focus on Computer Science fundamentals, Mathematics, and Software Engineering. 
                             Specialized coursework in Machine Learning, Data Structures, and Algorithms.
