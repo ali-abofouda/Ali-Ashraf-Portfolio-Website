@@ -15,12 +15,14 @@ const currentYearSpan = document.getElementById('current-year');
 const themeToggle = document.getElementById('theme-toggle');
 const loader = document.getElementById('loader');
 const typingText = document.getElementById('typing-text');
+const scrollProgress = document.getElementById('scroll-progress');
 
 // ========== Initialize ==========
 document.addEventListener('DOMContentLoaded', () => {
     initLoader();
     initNavigation();
     initScrollEffects();
+    initScrollProgress();
     initBackToTop();
     initContactForm();
     setCurrentYear();
@@ -29,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initTypingAnimation();
     initScrollReveal();
     initCertificateModal();
+    initParallax();
 });
 
 // ========== Navigation ==========
@@ -412,6 +415,45 @@ function throttle(func, limit = 100) {
             setTimeout(() => inThrottle = false, limit);
         }
     };
+}
+
+// ========== Scroll Progress Indicator ==========
+function initScrollProgress() {
+    if (!scrollProgress) return;
+    
+    function updateScrollProgress() {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollPercent = (scrollTop / docHeight) * 100;
+        scrollProgress.style.transform = `scaleX(${scrollPercent / 100})`;
+    }
+    
+    window.addEventListener('scroll', throttle(updateScrollProgress, 10));
+    updateScrollProgress(); // Initial call
+}
+
+// ========== Parallax Effect ==========
+function initParallax() {
+    const hero = document.querySelector('.hero');
+    if (!hero) return;
+    
+    // Only enable parallax on desktop
+    if (window.innerWidth > 768) {
+        window.addEventListener('scroll', throttle(() => {
+            const scrolled = window.scrollY;
+            const heroContent = hero.querySelector('.hero-content');
+            const heroVisual = hero.querySelector('.hero-visual');
+            
+            if (heroContent && scrolled < window.innerHeight) {
+                heroContent.style.transform = `translateY(${scrolled * 0.3}px)`;
+                heroContent.style.opacity = 1 - (scrolled / (window.innerHeight * 0.8));
+            }
+            
+            if (heroVisual && scrolled < window.innerHeight) {
+                heroVisual.style.transform = `translateY(${scrolled * 0.2}px)`;
+            }
+        }, 16));
+    }
 }
 
 // ========== Keyboard Navigation ==========
