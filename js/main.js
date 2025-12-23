@@ -12,6 +12,7 @@ const navLinks = document.querySelectorAll('.nav-link');
 const backToTop = document.getElementById('back-to-top');
 const contactForm = document.getElementById('contact-form');
 const currentYearSpan = document.getElementById('current-year');
+const themeToggle = document.getElementById('theme-toggle');
 
 // ========== Initialize ==========
 document.addEventListener('DOMContentLoaded', () => {
@@ -21,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initContactForm();
     setCurrentYear();
     initSmoothScroll();
+    initThemeToggle();
 });
 
 // ========== Navigation ==========
@@ -342,6 +344,40 @@ document.head.appendChild(style);
 function setCurrentYear() {
     if (currentYearSpan) {
         currentYearSpan.textContent = new Date().getFullYear();
+    }
+}
+
+// ========== Theme Toggle (Dark Mode) ==========
+function initThemeToggle() {
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    // Set initial theme
+    if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        updateThemeIcon(savedTheme);
+    } else if (prefersDark) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        updateThemeIcon('dark');
+    }
+    
+    // Toggle theme on button click
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        updateThemeIcon(newTheme);
+    });
+}
+
+function updateThemeIcon(theme) {
+    const icon = themeToggle.querySelector('i');
+    if (theme === 'dark') {
+        icon.className = 'fas fa-sun';
+    } else {
+        icon.className = 'fas fa-moon';
     }
 }
 
