@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initThemeToggle();
     initTypingAnimation();
     initScrollReveal();
+    initCertificateModal();
 });
 
 // ========== Navigation ==========
@@ -539,5 +540,45 @@ function initScrollReveal() {
     
     document.querySelectorAll('.reveal, .stagger-children').forEach(el => {
         revealObserver.observe(el);
+    });
+}
+
+// ========== Certificate Modal ==========
+function initCertificateModal() {
+    const modal = document.getElementById('cert-modal');
+    const modalImage = document.getElementById('cert-modal-image');
+    const modalClose = document.getElementById('cert-modal-close');
+    const zoomButtons = document.querySelectorAll('.cert-zoom');
+    
+    // Open modal on zoom button click
+    zoomButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const imageSrc = btn.getAttribute('data-image');
+            modalImage.src = imageSrc;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+    });
+    
+    // Close modal
+    function closeModal() {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    
+    modalClose.addEventListener('click', closeModal);
+    
+    // Close on backdrop click
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+    
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
     });
 }
