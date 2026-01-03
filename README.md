@@ -20,7 +20,11 @@ A modern, professional, and responsive personal portfolio website for showcasing
 Portfolio/
 ├── index.html          # Main HTML file
 ├── css/
-│   └── style.css       # All styles (CSS variables, responsive design)
+│   ├── theme.css       # CSS variables and theme configuration
+│   ├── base.css        # CSS reset, global styles, typography
+│   ├── layout.css      # Page layout, sections, containers, grid
+│   ├── components.css  # Reusable components (buttons, cards, navbar)
+│   └── animations.css  # Transitions, hover effects, keyframes
 ├── js/
 │   └── main.js         # JavaScript (navigation, animations, form handling)
 ├── assets/
@@ -42,7 +46,7 @@ Portfolio/
 
 1. **Clone or download the repository:**
    ```bash
-   git clone https://github.com/aliashraf407/portfolio.git
+   git clone https://github.com/ali-abofouda/portfolio.git
    cd portfolio
    ```
 
@@ -77,7 +81,7 @@ Edit `index.html` to update:
 
 ### Colors
 
-Edit CSS variables in `css/style.css`:
+Edit CSS variables in `css/theme.css`:
 
 ```css
 :root {
@@ -182,7 +186,7 @@ This project is open source and available under the [MIT License](LICENSE).
 - GitHub: [@ali-abofouda](https://github.com/ali-abofouda)
 - LinkedIn: [ali-ashraf-8b619b22a](https://www.linkedin.com/in/ali-ashraf-8b619b22a/)
 - X (Twitter): [@realaliashraf](https://x.com/realaliashraf)
-- Email: aliashraf407@gmail.com
+- Email: ali.ashraf.abofouda@gmail.com
 
 ---
 

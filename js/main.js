@@ -19,19 +19,106 @@ const scrollProgress = document.getElementById('scroll-progress');
 
 // ========== Initialize ==========
 document.addEventListener('DOMContentLoaded', () => {
-    initLoader();
-    initNavigation();
-    initScrollEffects();
-    initScrollProgress();
-    initBackToTop();
-    initContactForm();
-    setCurrentYear();
-    initSmoothScroll();
-    initThemeToggle();
-    initTypingAnimation();
-    initScrollReveal();
-    initCertificateModal();
-    initParallax();
+    try {
+        initLoader();
+        initNavigation();
+        initScrollEffects();
+        initScrollProgress();
+        initBackToTop();
+        initContactForm();
+        setCurrentYear();
+        initSmoothScroll();
+        initThemeToggle();
+        initTypingAnimation();
+        initScrollReveal();
+        initCertificateModal();
+        initParallax();
+        initLazyLoading();
+        
+        // Register service worker for PWA functionality
+        initServiceWorker();
+        
+        console.log('✅ Portfolio initialization complete');
+    } catch (error) {
+        console.error('❌ Error during initialization:', error);
+        // Fallback: ensure critical functionality still works
+        initBasicFunctionality();
+    }
+});
+
+// ========== Service Worker Registration ==========
+function initServiceWorker() {
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', async () => {
+            try {
+                const registration = await navigator.serviceWorker.register('/sw.js');
+                console.log('✅ Service Worker registered:', registration.scope);
+                
+                // Handle updates
+                registration.addEventListener('updatefound', () => {
+                    const newWorker = registration.installing;
+                    newWorker.addEventListener('statechange', () => {
+                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            // New content available, could show update notification
+                            console.log('🔄 New content available');
+                        }
+                    });
+                });
+                
+            } catch (error) {
+                console.warn('⚠️ Service Worker registration failed:', error);
+            }
+        });
+    }
+}
+
+// ========== Basic Functionality Fallback ==========
+function initBasicFunctionality() {
+    console.log('🔄 Loading basic functionality fallback...');
+    
+    // Ensure loader is hidden
+    const loader = document.getElementById('loader');
+    if (loader) {
+        setTimeout(() => loader.classList.add('hidden'), 1000);
+    }
+    
+    // Basic navigation
+    const navToggle = document.getElementById('nav-toggle');
+    const navMenu = document.getElementById('nav-menu');
+    
+    if (navToggle && navMenu) {
+        navToggle.addEventListener('click', () => {
+            navToggle.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+    }
+    
+    // Set current year
+    const currentYearSpan = document.getElementById('current-year');
+    if (currentYearSpan) {
+        currentYearSpan.textContent = new Date().getFullYear();
+    }
+}
+
+// ========== Enhanced Error Handling ==========
+window.addEventListener('error', (event) => {
+    console.error('💥 JavaScript Error:', {
+        message: event.message,
+        filename: event.filename,
+        line: event.lineno,
+        column: event.colno,
+        stack: event.error?.stack
+    });
+    
+    // Optional: Send error to analytics service
+    // trackError('js-error', event.message);
+});
+
+window.addEventListener('unhandledrejection', (event) => {
+    console.error('💥 Unhandled Promise Rejection:', event.reason);
+    
+    // Prevent the default browser behavior
+    event.preventDefault();
 });
 
 // ========== Navigation ==========
@@ -174,21 +261,64 @@ function initSmoothScroll() {
 function initContactForm() {
     if (!contactForm) return;
 
+    // Enhanced form validation
+    const validateForm = () => {
+        let isValid = true;
+        const requiredFields = contactForm.querySelectorAll('[required]');
+        
+        requiredFields.forEach(field => {
+            const formGroup = field.closest('.form-group');
+            const errorElement = formGroup.querySelector('.error-message');
+            
+            if (!field.value.trim()) {
+                formGroup.classList.add('error');
+                if (errorElement) {
+                    errorElement.textContent = `${field.labels[0].textContent.replace('*', '').trim()} is required`;
+                }
+                isValid = false;
+            } else {
+                formGroup.classList.remove('error');
+                if (errorElement) {
+                    errorElement.textContent = '';
+                }
+                
+                // Email validation
+                if (field.type === 'email' && !isValidEmail(field.value)) {
+                    formGroup.classList.add('error');
+                    if (errorElement) {
+                        errorElement.textContent = 'Please enter a valid email address';
+                    }
+                    isValid = false;
+                }
+            }
+        });
+        
+        return isValid;
+    };
+    
+    const isValidEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
     contactForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+
+        if (!validateForm()) {
+            showNotification('Please correct the errors and try again.', 'error');
+            return;
+        }
 
         const submitBtn = contactForm.querySelector('button[type="submit"]');
         const originalText = submitBtn.innerHTML;
 
-        // Show loading state
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-
-        // Get form data
-        const formData = new FormData(contactForm);
-
         try {
-            // Check if form action is a real endpoint
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+
+            // Get form data
+            const formData = new FormData(contactForm);
             const formAction = contactForm.getAttribute('action');
             
             if (formAction && formAction !== '#' && !formAction.includes('yourformid')) {
@@ -202,25 +332,63 @@ function initContactForm() {
                 });
 
                 if (response.ok) {
-                    showNotification('Message sent successfully! I\'ll get back to you soon.', 'success');
+                    showNotification('Message sent successfully! I\'ll get back to you soon. 🚀', 'success');
                     contactForm.reset();
+                    
+                    // Clear any error states
+                    contactForm.querySelectorAll('.form-group.error').forEach(group => {
+                        group.classList.remove('error');
+                    });
                 } else {
-                    throw new Error('Failed to send message');
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.error || 'Failed to send message');
                 }
             } else {
                 // Demo mode - simulate successful submission
                 await simulateFormSubmission();
-                showNotification('Demo: Message would be sent. Set up Formspree to enable real submissions.', 'info');
+                showNotification('Demo: Message would be sent. Set up Formspree to enable real submissions. 📧', 'info');
                 contactForm.reset();
             }
         } catch (error) {
             console.error('Form submission error:', error);
-            showNotification('Failed to send message. Please try again or email directly.', 'error');
+            showNotification(
+                error.message.includes('Failed to fetch') 
+                    ? 'Network error. Please check your connection and try again.'
+                    : 'Failed to send message. Please try again or email directly.',
+                'error'
+            );
         } finally {
             // Reset button state
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalText;
         }
+    });
+    
+    // Real-time validation feedback
+    const inputs = contactForm.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+        input.addEventListener('blur', () => {
+            if (input.hasAttribute('required') && !input.value.trim()) {
+                const formGroup = input.closest('.form-group');
+                const errorElement = formGroup.querySelector('.error-message');
+                
+                formGroup.classList.add('error');
+                if (errorElement) {
+                    errorElement.textContent = `${input.labels[0].textContent.replace('*', '').trim()} is required`;
+                }
+            }
+        });
+        
+        input.addEventListener('input', () => {
+            const formGroup = input.closest('.form-group');
+            if (formGroup.classList.contains('error') && input.value.trim()) {
+                formGroup.classList.remove('error');
+                const errorElement = formGroup.querySelector('.error-message');
+                if (errorElement) {
+                    errorElement.textContent = '';
+                }
+            }
+        });
     });
 }
 
@@ -471,24 +639,45 @@ const optimizedScrollHandler = throttle(() => {
     updateActiveNavLink();
 }, 100);
 
-// ========== Lazy Loading for Images (if any) ==========
-if ('IntersectionObserver' in window) {
-    const imageObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const img = entry.target;
-                if (img.dataset.src) {
-                    img.src = img.dataset.src;
-                    img.removeAttribute('data-src');
+// ========== Lazy Loading for Images ==========
+function initLazyLoading() {
+    // Check for Intersection Observer support
+    if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    
+                    // Handle lazy loading
+                    if (img.dataset.src) {
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src');
+                    }
+                    
+                    // Remove lazy class and add loaded class for styling
+                    img.classList.remove('lazy');
+                    img.classList.add('loaded');
+                    
+                    observer.unobserve(img);
                 }
-                imageObserver.unobserve(img);
-            }
+            });
+        }, {
+            rootMargin: '50px 0px',
+            threshold: 0.01
         });
-    });
 
-    document.querySelectorAll('img[data-src]').forEach(img => {
-        imageObserver.observe(img);
-    });
+        // Observe lazy images
+        document.querySelectorAll('img[loading="lazy"]').forEach(img => {
+            imageObserver.observe(img);
+        });
+    } else {
+        // Fallback for browsers without Intersection Observer
+        console.warn('⚠️ Intersection Observer not supported, loading all images');
+        document.querySelectorAll('img[data-src]').forEach(img => {
+            img.src = img.dataset.src;
+            img.removeAttribute('data-src');
+        });
+    }
 }
 
 // ========== Console Easter Egg ==========

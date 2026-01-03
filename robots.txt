@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://ali-abofouda.github.io/portfolio/sitemap.xml
+
+# Block common bot paths that aren't needed for a portfolio
+Disallow: /assets/icons/
+Disallow: /.git/
+Disallow: /node_modules/
